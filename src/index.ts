@@ -1,6 +1,7 @@
 import { Elysia, redirect } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { user, note } from './route'
+import staticPlugin from '@elysiajs/static'
 
 const app = new Elysia()
   .use(swagger({
@@ -25,6 +26,7 @@ const app = new Elysia()
   .get('/', redirect('/swagger'))
   .use(user)
   .use(note)
+  .use(staticPlugin())
   .listen(3000)
 
 console.log(
