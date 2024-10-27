@@ -1,15 +1,7 @@
 {
-    "version": 2,
-    "builds": [
-        {
-            "src": "./index.ts",
-            "use": "@vercel/node"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "index.ts"
-        }
-    ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "bun run build:vercel",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ]
 }
