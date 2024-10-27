@@ -5,7 +5,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
     "build": "bun build src/index.ts --target bun --outdir ./dist",
-    "build:vercel": "bun run build && bun scripts/transform-paths.ts",
     "start": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
