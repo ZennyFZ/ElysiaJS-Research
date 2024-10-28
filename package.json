@@ -8,9 +8,12 @@
     "start": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
+    "@elysiajs/cors": "^1.1.1",
+    "@elysiajs/jwt": "^1.1.1",
     "@elysiajs/static": "^1.1.1",
     "@elysiajs/swagger": "^1.1.5",
-    "elysia": "latest"
+    "elysia": "latest",
+    "mongoose": "^8.7.3"
   },
   "devDependencies": {
     "bun-types": "latest"
