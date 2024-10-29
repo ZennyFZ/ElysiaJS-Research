@@ -1,42 +1,34 @@
-import { Elysia, t } from "elysia"
-import { RefreshToken, SignIn, SignOut, SignUp } from "../controllers"
-import { AUTH_TAG } from "../config"
+import { Elysia } from "elysia"
+import { AUTH_TAG, jwtConfig } from "../config"
+import { signInBody, signUpBody } from "../common"
 
 export const auth = new Elysia({ prefix: "/auth" })
-    .model({
-        signUp: t.Object({
-            username: t.String({ minLength: 5 }),
-            email: t.String(),
-            password: t.String({ minLength: 8 })
-        }),
+    .use(jwtConfig)
 
-        signIn: t.Object({
-            email: t.String(),
-            password: t.String({ minLength: 8 })
-        }),
-    })
+    .post("/sign-up", ({body}) => {
 
-    .post("/sign-up", SignUp, {
-        body: "signUp",
+    }, {
+        body: signUpBody,
         detail: {
             tags: [AUTH_TAG]
         }
     })
 
-    .post("/sign-in", SignIn, {
-        body: "signIn",
+    .post("/sign-in", ({body}) => {
+    }, {
+        body: signInBody,
         detail: {
             tags: [AUTH_TAG]
         }
     })
 
-    .post("/refresh", RefreshToken, {
+    .post("/refresh", ({}), {
         detail: {
             tags: [AUTH_TAG]
         }
     })
 
-    .get("/sign-out", SignOut, {
+    .get("/sign-out", ({}), {
         detail: {
             tags: [AUTH_TAG]
         }

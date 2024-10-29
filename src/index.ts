@@ -7,7 +7,7 @@ import cors from "@elysiajs/cors"
 
 const PORT = 3000
 
-// db.connect()
+db.connect()
 
 const app = new Elysia()
   .use(cors())
