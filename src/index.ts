@@ -9,7 +9,7 @@ const PORT = 3000
 
 db.connect()
 
-const app = new Elysia()
+export const app = new Elysia()
   .use(cors())
   .use(swagger({
     documentation: {
