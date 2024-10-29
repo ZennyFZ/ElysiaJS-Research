@@ -1,15 +1,5 @@
-import { Env } from "bun"
-import { app } from "."
-import { Context } from "elysia"
+import Elysia from "elysia";
+import {app} from '.'
 
-export default {
-  async fetch(
-    request: Request,
-    env: Env,
-    ctx: Context,
-    
-  ): Promise<Response> {
-
-    return await app.fetch(request)
-  },
-}
+const main = new Elysia()
+.mount('', app.fetch)
