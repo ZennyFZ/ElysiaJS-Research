@@ -3,7 +3,7 @@ import { t } from "elysia"
 export const signInBody = t.Object({
     email: t.String(),
     password: t.String({minLength: 8}),
-    isRemember: t.Boolean()
+    isRemember: t.Boolean(),
 })
 
 export type SignInInterface = typeof signInBody.static
