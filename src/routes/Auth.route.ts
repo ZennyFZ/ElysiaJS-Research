@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { Elysia, error } from "elysia"
 import { AUTH_TAG, jwtConfig } from "../config"
 import { signInBody, signUpBody } from "../common"
-import { RefreshToken, SignIn, SignOut, SignUp } from "../service"
+import { GetProfile, RefreshToken, SignIn, SignOut, SignUp } from "../service"
 import { JWTPayloadSpec } from "@elysiajs/jwt"
 
 export const auth = new Elysia({ prefix: "/auth" })
@@ -67,6 +67,16 @@ export const auth = new Elysia({ prefix: "/auth" })
         const {accessToken} = cookie
         const result = await jwt.verify(accessToken.toString()) as JWTPayloadSpec
         return SignOut(cookie, result.sub as string)
+    }, {
+        detail: {
+            tags: [AUTH_TAG]
+        }
+    })
+
+    .get("/me", async ({cookie, jwt}) => {
+        const {accessToken} = cookie
+        const accessTokenPayload = await jwt.verify(accessToken.toString()) as JWTPayloadSpec
+        return GetProfile(accessTokenPayload.sub as string)
     }, {
         detail: {
             tags: [AUTH_TAG]

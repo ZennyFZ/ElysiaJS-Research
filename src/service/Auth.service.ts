@@ -98,3 +98,11 @@ export const RefreshToken = async (cookie: Record<string, Cookie<string | undefi
     if (result) return "Refresh successfully"
     return error(500)
 }
+
+export const GetProfile = async (email: string) => {
+    const profile = await User.findOne({
+        email
+    })
+    if (!profile) return error(400)
+    return profile
+}
