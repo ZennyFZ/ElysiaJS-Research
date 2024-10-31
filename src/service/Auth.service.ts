@@ -73,6 +73,28 @@ export const SignOut = async (cookie: Record<string, Cookie<string | undefined>>
     return error(500)
 }
 
-export const RefreshToken = async () => {
-    return "test"
+export const RefreshToken = async (cookie: Record<string, Cookie<string | undefined>>, accessJWTToken: Promise<string>, refreshJWTToken: Promise<string>, email: string) => {
+    const {accessToken, refreshToken} = cookie
+    accessToken.set({
+        value: await accessJWTToken,
+        httpOnly: true,
+        secure: true,
+        maxAge: 300
+    })
+
+    refreshToken.set({
+        value: await refreshJWTToken,
+        httpOnly: true,
+        secure: true,
+        maxAge: 2592000
+    })
+
+    const result = await User.findOneAndUpdate({
+        email
+    }, {
+        refreshToken
+    })
+
+    if (result) return "Refresh successfully"
+    return error(500)
 }

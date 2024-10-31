@@ -1,4 +1,5 @@
-import { Elysia } from "elysia"
+import { randomUUID } from 'node:crypto';
+import { Elysia, error } from "elysia"
 import { AUTH_TAG, jwtConfig } from "../config"
 import { signInBody, signUpBody } from "../common"
 import { RefreshToken, SignIn, SignOut, SignUp } from "../service"
@@ -18,11 +19,15 @@ export const auth = new Elysia({ prefix: "/auth" })
     .post("/sign-in", async ({body, cookie, jwt}) => {
         const accessJWTToken = jwt.sign({
             sub: body.email,
-            exp: 300
+            exp: 300,
+            iat: Math.floor(Date.now() / 1000),
+            jti: randomUUID()
         })
         const refreshJWTToken = jwt.sign({
             sub: body.email,
-            exp: 2592000
+            exp: 2592000,
+            iat: Math.floor(Date.now() / 1000)+2592000,
+            jti: randomUUID()
         })
         return SignIn(body, cookie, accessJWTToken, refreshJWTToken)
     }, {
@@ -32,8 +37,26 @@ export const auth = new Elysia({ prefix: "/auth" })
         }
     })
 
-    .post("/refresh", ({cookie, jwt}) => {
-        return RefreshToken()
+    .post("/refresh", async ({cookie, jwt}) => {
+        const {accessToken, refreshToken} = cookie
+        const accessTokenPayload = await jwt.verify(accessToken.toString()) as JWTPayloadSpec
+        const refreshTokenPayload = await jwt.verify(refreshToken.toString()) as JWTPayloadSpec
+
+        if (Math.floor(Date.now() / 1000) === refreshTokenPayload.iat) return error(401, "Credential expired, please login again")
+
+        const accessJWTToken = jwt.sign({
+            sub: accessTokenPayload.sub as string,
+            exp: 300,
+            iat: Math.floor(Date.now() / 1000),
+            jti: randomUUID()
+        })
+        const refreshJWTToken = jwt.sign({
+            sub: refreshTokenPayload.sub as string,
+            exp: 2592000,
+            iat: refreshTokenPayload.iat as number,
+            jti: randomUUID()
+        })
+        return RefreshToken(cookie, accessJWTToken, refreshJWTToken, accessTokenPayload.sub as string)
     }, {
         detail: {
             tags: [AUTH_TAG]
